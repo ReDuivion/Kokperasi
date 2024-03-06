@@ -38,7 +38,7 @@ export default function Register() {
                         ></input>
                     </div>
                     <h1 className="mx-5 text-xl mt-5 text-green-500 font-bold">
-                        Register Password :
+                        Konfirmasi Password :
                     </h1>
                     <div className="mx-5 mb-5 mt-2">
                         <input

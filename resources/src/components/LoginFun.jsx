@@ -1,28 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { error } from "laravel-mix/src/Log";
+import  { UserStore } from "../Context/UserContext";
 export default function LoginFun() {
-    const toast = useToast();
     const navigate = useNavigate();
-    const [data, setData] = useState({
+    const toast = useToast();
+    const [formData, setFormData] = useState({
         username: "",
         password: "",
     });
-    const { username: email, password } = data;
+    const [user, setUser]= useContext(UserStore)
+    const { username: email, password } = formData;
     const handleChange = (e) => {
-        setData({ ...data, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const res = await axios.post("http://localhost:8004/api/login", {
+            const response = await axios.post("http://localhost:8004/api/login", {
                 email,
                 password,
             });
+         localStorage.setItem("TOKEN",response.data.token);
+         axios.defaults.headers["authorization"]=
+         "bearer" + localStorage.getItem("TOKEN")
+         const res =await axios.get("http://localhost:8004/api/profile")
+         setUser({
+         token:localStorage.getItem("TOKEN"),
+         user:res.data.data,
+         })
             toast({
                 title: "Selamat Datang Kembali",
                 description: `Semoga harimu menyenangkan `,
@@ -43,6 +52,11 @@ export default function LoginFun() {
             console.error("Login failed:");
         }
     };
+    useEffect(()=>{
+    if(user.token!=null){
+    navigate("/login");
+    }
+    },[]);
     return (
         <div className="flex justify-center mt-28">
             <form onSubmit={handleSubmit}>
@@ -63,7 +77,7 @@ export default function LoginFun() {
                             placeholder="name@company.com"
                             type="text"
                             name="username"
-                            value={email}
+                            value={formData.email}
                             onChange={handleChange}
                             className="border-2 w-full h-12 p-2 rounded-md text-xl"
                         ></input>
@@ -76,7 +90,7 @@ export default function LoginFun() {
                             type="password"
                             id="password"
                             name="password"
-                            value={password}
+                            value={formData.password}
                             onChange={handleChange}
                             className="border-2 w-full h-12 p-2 rounded-md text-xl"
                             placeholder="Password"

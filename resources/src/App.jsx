@@ -8,6 +8,7 @@ import {
 
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import EditProfile from "./pages/Edit"
 
 const App = () => {
     return (
@@ -15,9 +16,10 @@ const App = () => {
             <Routes>
                 <Route exact path="/register" element={<Register />}></Route>
                 <Route exact path="/login" element={<Login />}></Route>
+                <Route exact path="/edit" element={<EditProfile />}></Route>
             </Routes>
         </>
-    );  //blom muncul ya
+    );  
 };
 
 export default App; 
